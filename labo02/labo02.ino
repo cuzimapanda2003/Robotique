@@ -29,7 +29,7 @@ long currentTime = 0;
 long previousTime = 0;
 long delayTime = 500;
 
-bool dangerCycleComplete = false;  // indique si on a fini le cycle danger
+bool dangerCycleComplete = false; 
 
 void setup() {
   Serial.begin(9600);
@@ -48,11 +48,9 @@ void setup() {
 void loop() {
   currentTime = millis();
 
-  // Si on est en danger, on veut exécuter tout le cycle complet avant de checker la distance
   if(currentState == danger && !dangerCycleComplete) {
     stateDanger();
   } else {
-    // Sinon on peut lire la distance et changer d’état normalement
     dist();
     stateMachine();
   }
@@ -75,7 +73,6 @@ void stateMachine(){
       break;
 
     case danger:
-      // en théorie ici on ne passe jamais car dangerCycleComplete bloque
       ledTaskRed();
       break;
   }
@@ -131,25 +128,22 @@ void dist(){
   float distCm = ultraSensor.distanceCm();
 
   if(currentState == danger){
-    // On sort du mode danger que si on a fini le cycle et que la distance est suffisante
     if(dangerCycleComplete){
       if(distCm >= 80){
         currentState = normal;
         state2 = stop;
-        dangerCycleComplete = false; // reset pour futur danger
+        dangerCycleComplete = false; 
       }
       else if(distCm < 80 && distCm >= 40){
         currentState = ralenti;
         state2 = stop;
-        dangerCycleComplete = false; // reset pour futur danger
+        dangerCycleComplete = false; 
       }
-      // si toujours proche <40 on reste en danger et on devra relancer cycle dans loop
+
     }
-    // si pas cycle fini on ne change rien
     return;
   }
 
-  // Si pas en danger, mise à jour simple
   if(distCm >= 80){
      currentState = normal;
      state2 = stop;  
@@ -162,7 +156,7 @@ void dist(){
     currentState = danger;
     state2 = stop;
     previousTime = currentTime;
-    dangerCycleComplete = false;  // on démarre un nouveau cycle danger
+    dangerCycleComplete = false;  
   }
 }
 
@@ -184,7 +178,6 @@ void stateDanger(){
   }
 }
 
-// ARRÊT pendant delayTime ms
 void stopRobot(){
   int maxPwm = 0;
   digitalWrite(m1_in2, LOW);
@@ -201,7 +194,6 @@ void stopRobot(){
   }
 }
 
-// RECUL pendant delayTime ms
 void reculeRobot(){
   int maxPwm = 76;
   digitalWrite(m1_in2, HIGH);
@@ -222,12 +214,12 @@ void reculeRobot(){
 void turnLeftRobot(){
   int maxPwm = 150;
   int delayTime2 = 1000;
-  digitalWrite(m1_in2, HIGH);
-  digitalWrite(m1_in1, LOW);
+  digitalWrite(m1_in2, LOW);
+  digitalWrite(m1_in1, HIGH);
   analogWrite(m1_pwm, maxPwm);
 
-  digitalWrite(m2_in2, LOW);
-  digitalWrite(m2_in1, HIGH);
+  digitalWrite(m2_in2, HIGH);
+  digitalWrite(m2_in1, LOW);
   analogWrite(m2_pwm, maxPwm);
 
   if (currentTime - previousTime >= delayTime2) {
