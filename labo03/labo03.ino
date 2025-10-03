@@ -87,6 +87,53 @@ void avancerCm(int distanceCm, short speed = 100) {
   encoderRight.setTarPWM(0);
 }
 
+void turnRight90(short speed = 100) {
+  const float distanceRoues = 15.5; 
+  const float diamRoue = 6.5;     
+  const float pulsesPerTour = 9 * 39.267; 
+
+  const float circRobot = PI * distanceRoues; 
+  const float quartTour = circRobot / 4.0;   
+  const float circRoue = PI * diamRoue;     
+  const float nbTours = quartTour / circRoue; 
+  const long nbPulsations = nbTours * pulsesPerTour;
+
+  static bool turning = false;
+  static long startL, startR;
+
+  if (!turning) {
+    startL = encoderLeft.getCurPos();
+    startR = encoderRight.getCurPos();
+    turning = true;
+  }
+
+  encoderLeft.loop();
+  encoderRight.loop();
+
+  long posL = abs(encoderLeft.getCurPos() - startL);
+  long posR = abs(encoderRight.getCurPos() - startR);
+
+  short leftPWM = speed;  
+  short rightPWM = speed; 
+
+  if (posL < nbPulsations) encoderLeft.setTarPWM(leftPWM);
+  else encoderLeft.setTarPWM(0);
+
+  if (posR < nbPulsations) encoderRight.setTarPWM(rightPWM);
+  else encoderRight.setTarPWM(0);
+
+  if (posL >= nbPulsations && posR >= nbPulsations) {
+    turning = false;
+    stateCount++;
+    if (stateCount == 1 || stateCount == 3) state = avanceGrand;
+    else if (stateCount == 2) state = avancePetit;
+    else if (stateCount == 4) {
+      state = stop;
+      previousTime = currentTime;
+    }
+  }
+}
+
 
 void loop() {
   currentTime = millis();
@@ -116,14 +163,7 @@ void stateMachine() {
       break;
     case tourne:
       ledTaskBlue();
-
-        stateCount++;
-        if (stateCount == 1 || stateCount == 3) state = avanceGrand;
-        else if (stateCount == 2) state = avancePetit;
-        else if (stateCount == 4) {
-          state = stop;
-          previousTime = currentTime;
-        }
+      turnRight90();
       break;
   }
 }
