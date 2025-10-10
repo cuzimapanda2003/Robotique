@@ -1,0 +1,18 @@
+{
+  "header": [255, 85],
+  "directions": {
+    "w": "AVANCER",
+    "a": "TOURNER_GAUCHE", 
+    "s": "RECULER",
+    "d": "TOURNER_DROITE",
+	"e": "KLAXONNER",
+    "stop": "ARRETER"
+  },
+  "actions": [
+    {
+      "key": "#",
+      "data": "DEBOGUER",
+      "label": "Déboguage"
+    }
+  ]
+}

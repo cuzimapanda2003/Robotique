@@ -37,6 +37,7 @@ void setup() {
   Serial.begin(115200);
   gyro.begin();
   gyro.resetData();
+  gyro.update();
   encoderLeft.setPulse(9);
   encoderRight.setPulse(9);
   encoderLeft.setRatio(39.267);
