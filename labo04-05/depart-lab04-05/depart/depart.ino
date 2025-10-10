@@ -86,6 +86,7 @@ void gererCommandeSimple(const String& cmd)
 }
 
 void gererCommandeComposee(const String& action, const String& parametre)
+{
   // À supprimer
   Serial.print("Commande composée : action -> ");
   Serial.print(action);
